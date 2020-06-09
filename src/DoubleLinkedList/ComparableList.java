@@ -1,14 +1,18 @@
 package DoubleLinkedList;
 
-public class ComparableList<E extends Comparable> {
+public class ComparableList<E extends Comparable<E>> {
     private int size;
-    private Element head, tail;
+    private Element<E> head, tail;
 
-    // Lösung schlägt dummy Elemente vor
+    // Solution suggests Dummy elements
     public ComparableList() {
         this.size = 0;
-        this.head = null;
-        this.tail = null;
+        this.head = new Element<E>(null);
+        this.tail = new Element<E>(null);
+        head.next = tail;
+        head.prev = head;
+        tail.prev = head;
+        tail.next = tail;
     }
 
     public int size() {
@@ -16,73 +20,64 @@ public class ComparableList<E extends Comparable> {
     }
 
     public void addHead(E data) {
-        if(size == 0) {
-            head = new Element(data);
-            tail = head;
-        } else {
-            Element e = new Element(data);
-            e.next = head.next;
-            head.next.prev = e;
-            head = e;
-        }
+        Element<E> e = new Element<E>(data);
+        e.next = head.next;
+        e.prev = head;
+        head.next.prev = e;
+        head.next = e;
         size++;
     }
 
     public void addTail(E data) {
-        if(size == 0) {
-            tail = new Element(data);
-            head = tail;
-        } else {
-            Element e = new Element(data);
-            e.prev = tail;
-            tail.prev.next = e;
-            tail = e;
-        }
+        Element<E> e = new Element<E>(data);
+        e.prev = tail.prev;
+        e.next = tail;
+        e.prev.next = e;
+        tail.prev = e;
         size++;
     }
 
     public E removeHead() {
-        if(size >= 2) {
-            E data = (E)head.data;
-            head.next.prev = null;
-            head = head.next;
-            return data;
-        } else if(size == 1) {
-            E data = (E)head.data;
-            head = tail = null;
-            return data;
+        if(size == 0) {
+            return null;
+        } else {
+            Element<E> e = head.next;
+            head.next = e.next;
+            e.next.prev = head;
+            size--;
+            return (E)e.data;
         }
-        return null;
     }
 
     public E removeTail() {
-        if(size >= 2) {
-            E data = (E)tail.data;
-            tail.prev.next = null;
-            tail = tail.prev;
-            return data;
-        } else if(size == 1) {
-            E data = (E)tail.data;
-            tail = head = null;
-            return data;
+        if(size == 0) {
+            return null;
+        } else {
+            Element<E> e = tail.prev;
+            tail.prev = e.prev;
+            e.prev.next = tail;
+            size--;
+            return (E)e.data;
         }
-        return null;
     }
 
     @Override
     public String toString(){
         String result = "";
-        Element<E> r = head;
-        while (r != null && r.next != r){
-            result += ("  " + r.data.toString());
+        Element<E> r = head.next;
+        result += "Head";
+        while (r.next != r){
+            String str = r.data != null ? r.data.toString() : "";
+            result += ("  " + str);
             r = r.next;
         }
+        result += " Tail";
         return result;
     }
 
-    private static class Element<E extends Comparable>  {
+    private static class Element<E>  {
         E data;
-        Element prev, next;
+        Element<E> prev, next;
 
         public Element(E data) {
             this.data = data;
