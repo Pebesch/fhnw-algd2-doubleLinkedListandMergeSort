@@ -1,4 +1,5 @@
 import DoubleLinkedList.ComparableList;
+import DoubleLinkedList.ComparableListSolution;
 
 import java.util.ListIterator;
 
@@ -13,6 +14,9 @@ public class Main {
         for (int i = 5; i < 10; i++) {
             list1.addTail(i);
         }
+        System.out.println(list1);
+
+        list1.mergeSort();
         System.out.println(list1);
     }
 }
